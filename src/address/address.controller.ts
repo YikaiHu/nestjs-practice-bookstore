@@ -3,11 +3,13 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Post,
   Put,
   Query,
+  UseFilters,
   UsePipes,
 } from '@nestjs/common';
 import { AddressService } from './address.service';
@@ -24,9 +26,11 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { AddressValidationPipe } from './address-validation.pipe';
+import { HttpExceptionFilter } from 'src/http-exception.filter';
 
 @ApiTags('address')
 @Controller('address')
+@UseFilters(new HttpExceptionFilter())
 export class AddressController {
   constructor(private readonly addressService: AddressService) {}
 
@@ -37,8 +41,12 @@ export class AddressController {
     type: Number,
     description: 'The unique id of the address',
   })
-  getById(@Param('id', ParseIntPipe) id: number) {
-    return this.addressService.getById(id);
+  async getById(@Param('id', ParseIntPipe) id: number) {
+    const address = await this.addressService.getById(id);
+    if (!address) {
+      throw new NotFoundException('Address not found');
+    }
+    return address;
   }
 
   //   // address?id=1
@@ -50,8 +58,8 @@ export class AddressController {
 
   @Get()
   @ApiOperation({ summary: 'Retrieve all addresses' })
-  getAll() {
-    return this.addressService.getAll();
+  async getAll() {
+    return await this.addressService.getAll();
   }
 
   @Post()
@@ -61,8 +69,8 @@ export class AddressController {
     description: 'The details of the new address',
   })
   @UsePipes(AddressValidationPipe)
-  create(@Body() address: CreateAddressDto) {
-    return this.addressService.create(address);
+  async create(@Body() address: CreateAddressDto) {
+    return this.addressService.create(address); // here we can ignore await, nestjs will automatically chang it to await
   }
 
   @Put(':id')
@@ -76,8 +84,8 @@ export class AddressController {
     type: AddressDto,
     description: 'The updated details of the address',
   })
-  update(@Param('id', ParseIntPipe) id: number, @Body() address: AddressDto) {
-    return this.addressService.update(id, address);
+  async update(@Param('id', ParseIntPipe) id: number, @Body() address: AddressDto) {
+    return await this.addressService.update(id, address);
   }
 
   @Delete(':id')
@@ -87,7 +95,7 @@ export class AddressController {
     type: Number,
     description: 'The unique id of the address',
   })
-  deleteById(@Param('id', ParseIntPipe) id: number) {
-    return this.addressService.delete(id);
+  async deleteById(@Param('id', ParseIntPipe) id: number) {
+    return await this.addressService.delete(id);
   }
 }

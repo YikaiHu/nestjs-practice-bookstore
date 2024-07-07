@@ -9,6 +9,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+      disableErrorMessages: false,
+      validationError: {
+        value: false,
+      },
       transform: true, // must enable this, or the id in query mode will be string
     }),
   );
