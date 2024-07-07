@@ -7,16 +7,20 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { AddressService } from './address.service';
-import { CreateAddressDto } from './dto/create-address.dto';
-import { AddressDto } from './dto/address.dto';
+import {
+  AddressDto,
+  AddressIdParam,
+  CreateAddressDto,
+} from './dto/address.dto';
 import {
   ApiTags,
   ApiOperation,
-  ApiResponse,
   ApiParam,
   ApiBody,
+  ApiQuery,
 } from '@nestjs/swagger';
 
 @ApiTags('address')
@@ -31,23 +35,19 @@ export class AddressController {
     type: Number,
     description: 'The unique id of the address',
   })
-  @ApiResponse({
-    status: 200,
-    description: 'The address has been successfully retrieved.',
-    type: AddressDto,
-  })
-  @ApiResponse({ status: 404, description: 'Address not found.' })
   getById(@Param('id', ParseIntPipe) id: number) {
     return this.addressService.getById(id);
   }
 
+  //   // address?id=1
+  //   @Get()
+  //   search(@Query() idParam: AddressIdParam) {
+  //     console.log('type 1: ', typeof idParam.id);
+  //     return this.addressService.getById(idParam.id);
+  //   }
+
   @Get()
   @ApiOperation({ summary: 'Retrieve all addresses' })
-  @ApiResponse({
-    status: 200,
-    description: 'All addresses have been successfully retrieved.',
-    type: [AddressDto],
-  })
   getAll() {
     return this.addressService.getAll();
   }
@@ -58,11 +58,6 @@ export class AddressController {
     type: CreateAddressDto,
     description: 'The details of the new address',
   })
-  @ApiResponse({
-    status: 201,
-    description: 'The address has been successfully created.',
-  })
-  @ApiResponse({ status: 400, description: 'Invalid input.' })
   create(@Body() address: CreateAddressDto) {
     return this.addressService.create(address);
   }
@@ -78,12 +73,6 @@ export class AddressController {
     type: AddressDto,
     description: 'The updated details of the address',
   })
-  @ApiResponse({
-    status: 200,
-    description: 'The address has been successfully updated.',
-  })
-  @ApiResponse({ status: 404, description: 'Address not found.' })
-  @ApiResponse({ status: 400, description: 'Invalid input.' })
   update(@Param('id', ParseIntPipe) id: number, @Body() address: AddressDto) {
     return this.addressService.update(id, address);
   }
@@ -95,11 +84,6 @@ export class AddressController {
     type: Number,
     description: 'The unique id of the address',
   })
-  @ApiResponse({
-    status: 200,
-    description: 'The address has been successfully deleted.',
-  })
-  @ApiResponse({ status: 404, description: 'Address not found.' })
   deleteById(@Param('id', ParseIntPipe) id: number) {
     return this.addressService.delete(id);
   }

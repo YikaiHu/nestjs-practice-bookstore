@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAddressDto } from './dto/create-address.dto';
+import { CreateAddressDto } from './dto/address.dto';
 
 interface AddressDto {
   id: number;
@@ -23,7 +23,9 @@ export class AddressStoreService {
 
   async get(id: number): Promise<AddressDto> {
     return new Promise((resolve) => {
-      const result = this.addressDataStore.find((t) => t.id === id);
+      const result = this.addressDataStore.find((t) => {
+        return t.id === id;
+      });
       resolve(result);
     });
   }

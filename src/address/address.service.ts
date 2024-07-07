@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AddressDto } from './dto/address.dto';
-import { CreateAddressDto } from './dto/create-address.dto';
+import { AddressDto, CreateAddressDto } from './dto/address.dto';
 import { AddressStoreService } from './address-store.service';
 
 @Injectable()
