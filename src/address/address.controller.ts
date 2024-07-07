@@ -27,10 +27,12 @@ import {
 } from '@nestjs/swagger';
 import { AddressValidationPipe } from './address-validation.pipe';
 import { HttpExceptionFilter } from 'src/http-exception.filter';
+import { DuplicateAddressException } from './duplicate-address-exception';
 
 @ApiTags('address')
 @Controller('address')
-@UseFilters(new HttpExceptionFilter())
+// @UseFilters(new HttpExceptionFilter())
+// @UseFilters(HttpExceptionFilter) 这两种写法都可以，如果不是手动new 的话，NestJS 的DI 会帮你创建
 export class AddressController {
   constructor(private readonly addressService: AddressService) {}
 
@@ -41,6 +43,7 @@ export class AddressController {
     type: Number,
     description: 'The unique id of the address',
   })
+  //@UseFilters(HttpExceptionFilter)
   async getById(@Param('id', ParseIntPipe) id: number) {
     const address = await this.addressService.getById(id);
     if (!address) {
@@ -70,6 +73,12 @@ export class AddressController {
   })
   @UsePipes(AddressValidationPipe)
   async create(@Body() address: CreateAddressDto) {
+    var existingAddress = this.addressService.getByAddressLine(
+      address.addressLine,
+    );
+    if (existingAddress) {
+      throw new DuplicateAddressException(address.addressLine); // If you want to use customized exception, you have to remove controller leveled exception
+    }
     return this.addressService.create(address); // here we can ignore await, nestjs will automatically chang it to await
   }
 
@@ -84,7 +93,10 @@ export class AddressController {
     type: AddressDto,
     description: 'The updated details of the address',
   })
-  async update(@Param('id', ParseIntPipe) id: number, @Body() address: AddressDto) {
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() address: AddressDto,
+  ) {
     return await this.addressService.update(id, address);
   }
 

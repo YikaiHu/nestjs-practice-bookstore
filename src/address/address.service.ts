@@ -25,4 +25,8 @@ export class AddressService {
   async delete(id: number): Promise<void> {
     return await this.addressStoreService.delete(id);
   }
+
+  async getByAddressLine(addressLine: string): Promise<AddressDto> {
+    return await this.addressStoreService.getByAddressLine(addressLine);
+  }
 }

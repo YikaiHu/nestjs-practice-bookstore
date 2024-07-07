@@ -66,4 +66,13 @@ export class AddressStoreService {
       resolve();
     });
   }
+
+  async getByAddressLine(addressLine: string): Promise<AddressDto> {
+    return new Promise((resolve) => {
+      const result = this.addressDataStore.find((t) => {
+        return t.addressLine === addressLine;
+      });
+      resolve(result);
+    })
+  }
 }
