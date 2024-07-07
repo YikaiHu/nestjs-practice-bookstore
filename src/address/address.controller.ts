@@ -1,9 +1,9 @@
+import { CustomLogger } from './../logger/custom-logger';
 import {
   Body,
   Controller,
   Delete,
   Get,
-  Logger,
   NotFoundException,
   Param,
   ParseIntPipe,
@@ -35,8 +35,12 @@ import { DuplicateAddressException } from './duplicate-address-exception';
 @UseFilters(new HttpAddressExceptionFilter())
 // @UseFilters(HttpAddressExceptionFilter) 这两种写法都可以，如果不是手动new 的话，NestJS 的DI 会帮你创建
 export class AddressController {
-  private logger = new Logger('AddressController');
-  constructor(private readonly addressService: AddressService) {}
+  constructor(
+    private readonly addressService: AddressService,
+    private readonly customLogger: CustomLogger,
+  ) {
+    this.customLogger.log('AddressController initialized!');
+  }
 
   @Get(':id')
   @ApiOperation({ summary: 'Retrieve an address by its unique id' })
@@ -49,10 +53,10 @@ export class AddressController {
   async getById(@Param('id', ParseIntPipe) id: number) {
     const address = await this.addressService.getById(id);
     if (!address) {
-      this.logger.debug(`Address not found for id:${id}`);
+      this.customLogger.debug(`Address not found for id:${id}`);
       throw new NotFoundException('Address not found');
     }
-    this.logger.verbose(`Address is found for id: ${id}`);
+    this.customLogger.verbose(`Address is found for id: ${id}`);
     return address;
   }
 
@@ -81,7 +85,7 @@ export class AddressController {
       address.addressLine,
     );
     if (existingAddress) {
-      this.logger.warn('duplicated address');
+      this.customLogger.warn('duplicated address');
       throw new DuplicateAddressException(address.addressLine);
     }
     return this.addressService.create(address); // here we can ignore await, nestjs will automatically chang it to await
