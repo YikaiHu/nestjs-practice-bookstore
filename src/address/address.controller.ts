@@ -26,13 +26,13 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { AddressValidationPipe } from './address-validation.pipe';
-import { HttpExceptionFilter } from 'src/http-exception.filter';
+import { HttpAddressExceptionFilter } from 'src/http-exception.filter';
 import { DuplicateAddressException } from './duplicate-address-exception';
 
 @ApiTags('address')
 @Controller('address')
-// @UseFilters(new HttpExceptionFilter())
-// @UseFilters(HttpExceptionFilter) 这两种写法都可以，如果不是手动new 的话，NestJS 的DI 会帮你创建
+@UseFilters(new HttpAddressExceptionFilter())
+// @UseFilters(HttpAddressExceptionFilter) 这两种写法都可以，如果不是手动new 的话，NestJS 的DI 会帮你创建
 export class AddressController {
   constructor(private readonly addressService: AddressService) {}
 
@@ -77,7 +77,7 @@ export class AddressController {
       address.addressLine,
     );
     if (existingAddress) {
-      throw new DuplicateAddressException(address.addressLine); // If you want to use customized exception, you have to remove controller leveled exception
+      throw new DuplicateAddressException(address.addressLine);
     }
     return this.addressService.create(address); // here we can ignore await, nestjs will automatically chang it to await
   }
