@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  UsePipes,
 } from '@nestjs/common';
 import { AddressService } from './address.service';
 import {
@@ -22,6 +23,7 @@ import {
   ApiBody,
   ApiQuery,
 } from '@nestjs/swagger';
+import { AddressValidationPipe } from './address-validation.pipe';
 
 @ApiTags('address')
 @Controller('address')
@@ -58,6 +60,7 @@ export class AddressController {
     type: CreateAddressDto,
     description: 'The details of the new address',
   })
+  @UsePipes(AddressValidationPipe)
   create(@Body() address: CreateAddressDto) {
     return this.addressService.create(address);
   }
