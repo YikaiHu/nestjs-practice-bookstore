@@ -1,45 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { AddressDto } from './dto/address.dto';
 import { CreateAddressDto } from './dto/create-address.dto';
+import { AddressStoreService } from './address-store.service';
 
 @Injectable()
 export class AddressService {
-  private addressDataStore: AddressDto[] = [
-    {
-      id: 1,
-      addressLine: '123 Queen street',
-      postCode: 4000,
-      state: 'QLD',
-      createdDate: new Date(),
-    },
-  ];
+  constructor(private readonly addressStoreService: AddressStoreService) {}
 
-  //Retrieve an address by its unique id
-  getById(id: number) {
-    return this.addressDataStore.find((t) => t.id === id);
+  async getById(id: number): Promise<AddressDto> {
+    return await this.addressStoreService.get(id);
   }
 
-  getAll() {
-    return this.addressDataStore;
+  async getAll(): Promise<AddressDto[]> {
+    return await this.addressStoreService.getAll();
   }
 
-  create(address: CreateAddressDto) {
-    const id =
-      this.addressDataStore.length === 0
-        ? 0
-        : Math.max(...this.addressDataStore.map((t) => t.id));
-    const newAddress = { ...address, id: id + 1, createdDate: new Date() };
-    this.addressDataStore.push(newAddress);
-    console.log('addressDataStore:', this.addressDataStore);
+  async create(address: CreateAddressDto): Promise<void> {
+    return await this.addressStoreService.create(address);
   }
 
-  update(id: number, address: AddressDto): void {
-    const index = this.addressDataStore.findIndex((x) => x.id === id);
-    this.addressDataStore[index] = address;
+  async update(id: number, address: AddressDto): Promise<void> {
+    return await this.addressStoreService.update(id, address);
   }
 
-  delete(id: number) {
-    const index = this.addressDataStore.findIndex((x) => x.id === id);
-    this.addressDataStore.splice(index, 1);
+  async delete(id: number): Promise<void> {
+    return await this.addressStoreService.delete(id);
   }
 }
