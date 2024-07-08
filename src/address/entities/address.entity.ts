@@ -1,20 +1,27 @@
-// import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-// @Entity()
-// export class AddressEntity {
-//   @PrimaryGeneratedColumn
-//   @Column
-//   id: number;
+@Entity({ name: 'address' })
+export class AddressEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-//   @Column
-//   addressLine: string;
+  @Column()
+  address_line: string;
 
-//   @Column
-//   postCode: string;
+  @Column()
+  post_code: string;
 
-//   @Column
-//   state: string;
+  @Column()
+  state: string;
 
-//   @Column
-//   createdDate: Date;
-// }
+  @CreateDateColumn()
+  created_date: Date;
+
+  @CreateDateColumn()
+  updated_date: Date;
+}
