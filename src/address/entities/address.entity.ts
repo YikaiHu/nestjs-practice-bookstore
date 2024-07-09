@@ -10,7 +10,7 @@ export class AddressEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({default: 'NA'})
   address_line: string;
 
   @Column()

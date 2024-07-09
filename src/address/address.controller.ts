@@ -28,7 +28,6 @@ import {
 } from '@nestjs/swagger';
 import { AddressValidationPipe } from './address-validation.pipe';
 import { HttpAddressExceptionFilter } from 'src/http-exception.filter';
-import { DuplicateAddressException } from './duplicate-address-exception';
 
 @ApiTags('address')
 @Controller('address')
@@ -81,13 +80,6 @@ export class AddressController {
   })
   @UsePipes(AddressValidationPipe)
   async create(@Body() address: CreateAddressDto) {
-    var existingAddress = this.addressService.getByAddressLine(
-      address.addressLine,
-    );
-    if (existingAddress) {
-      this.customLogger.warn('duplicated address');
-      throw new DuplicateAddressException(address.addressLine);
-    }
     return this.addressService.create(address); // here we can ignore await, nestjs will automatically chang it to await
   }
 

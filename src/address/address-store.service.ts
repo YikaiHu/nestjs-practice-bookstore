@@ -1,5 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateAddressDto } from './dto/address.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { AddressEntity } from './entities/address.entity';
+import { DeleteResult, Repository } from 'typeorm';
+import { DuplicateAddressException } from './duplicate-address-exception';
 
 interface AddressDto {
   id: number;
@@ -11,68 +20,71 @@ interface AddressDto {
 
 @Injectable()
 export class AddressStoreService {
-  private addressDataStore: AddressDto[] = [
-    {
-      id: 1,
-      addressLine: '123 Queen street',
-      postCode: 4000,
-      state: 'QLD',
-      createdDate: new Date(),
-    },
-  ];
-
-  async get(id: number): Promise<AddressDto> {
-    return new Promise((resolve) => {
-      const result = this.addressDataStore.find((t) => {
-        return t.id === id;
-      });
-      resolve(result);
+  constructor(
+    @InjectRepository(AddressEntity)
+    private addressRepository: Repository<AddressEntity>,
+  ) {}
+  async get(id: number): Promise<AddressEntity> {
+    const address = await this.addressRepository.findOne({
+      where: {
+        id,
+      },
     });
+    if (!address) {
+      throw new NotFoundException('Address not found');
+    }
+    return address;
   }
 
-  async getAll(): Promise<AddressDto[]> {
-    return new Promise((resolve) => {
-      resolve(this.addressDataStore);
-    });
+  async getAll(): Promise<AddressEntity[]> {
+    const result = this.addressRepository.find({});
+    return result;
   }
 
-  async create(address: CreateAddressDto): Promise<void> {
-    const id =
-      this.addressDataStore.length === 0
-        ? 0
-        : Math.max(...this.addressDataStore.map((t) => t.id));
-    const newAddress = {
-      ...address,
-      id: id + 1,
-      createdDate: new Date(),
-    } as AddressDto;
-
-    return new Promise((resolve) => {
-      this.addressDataStore.push(newAddress);
-      resolve();
+  async create(address: CreateAddressDto): Promise<AddressEntity> {
+    const existingAddress = await this.addressRepository.findOne({
+      where: { address_line: address.addressLine },
     });
+
+    if (existingAddress) {
+      throw new DuplicateAddressException(address.addressLine);
+    }
+
+    const entity = new AddressEntity();
+    entity.address_line = address.addressLine;
+    entity.post_code = address.postCode.toString();
+    entity.state = address.state;
+
+    return await this.addressRepository.save(entity);
   }
-  async update(id: number, address: AddressDto): Promise<void> {
-    return new Promise((resolve) => {
-      const index = this.addressDataStore.findIndex((x) => x.id === id);
-      this.addressDataStore[index] = address;
-      resolve();
+  async update(id: number, address: AddressDto): Promise<AddressEntity> {
+    const existingEntity = await this.addressRepository.findOne({
+      where: {
+        id,
+      },
     });
+    if (!existingEntity) {
+      throw new HttpException('Incorrect address id', HttpStatus.BAD_REQUEST);
+    }
+    existingEntity.address_line = address.addressLine;
+    existingEntity.post_code = address.postCode.toString();
+    existingEntity.state = address.state;
+    return await this.addressRepository.save(existingEntity);
   }
 
-  async delete(id: number): Promise<void> {
-    return new Promise((resolve) => {
-      this.addressDataStore = this.addressDataStore.filter((t) => t.id !== id);
-      resolve();
-    });
+  async delete(id: number): Promise<DeleteResult> {
+    return await this.addressRepository.delete({ id });
   }
 
-  async getByAddressLine(addressLine: string): Promise<AddressDto> {
-    return new Promise((resolve) => {
-      const result = this.addressDataStore.find((t) => {
-        return t.addressLine === addressLine;
-      });
-      resolve(result);
-    })
+  async getByAddressLine(addressLine: string): Promise<AddressEntity> {
+    const address = await this.addressRepository.findOne({
+      where: {
+        address_line: addressLine,
+      },
+    });
+    if (!address) {
+      throw new NotFoundException('Address not found');
+    }
+    return address;
   }
 }
