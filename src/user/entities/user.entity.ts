@@ -1,6 +1,7 @@
 import { AddressEntity, ContactEntity } from 'src/address/entities/address.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   JoinTable,
@@ -8,6 +9,7 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { RoleEntity } from './role.entity';
 
@@ -35,4 +37,10 @@ export class UserEntity {
   })
   @JoinTable()
   roles: RoleEntity[];
+
+  @CreateDateColumn()
+  created_date: Date;
+
+  @UpdateDateColumn()
+  updated_date: Date;
 }

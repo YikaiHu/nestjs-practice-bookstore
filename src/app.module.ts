@@ -11,8 +11,7 @@ import { LoggerModule } from './logger/logger.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './user/user.module';
-
-const configService = new ConfigService();
+import OrmConfig from './typeorm';
 
 @Module({
   imports: [
@@ -21,17 +20,13 @@ const configService = new ConfigService();
     LoggerModule,
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [OrmConfig],
       envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: configService.get('DATABASE_HOST'),
-      port: configService.get('DATABASE_PORT'),
-      username: configService.get('DATABASE_USER'),
-      password: configService.get('DATABASE_PASSWORD'),
-      database: configService.get('DATABASE_NAME'),
-      autoLoadEntities: true,
-      synchronize: configService.get('SYNCHRONIZE'),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) =>
+        configService.get('OrmConfig'),
     }),
     UserModule,
   ],
