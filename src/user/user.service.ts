@@ -1,8 +1,12 @@
+import { RoleEntity } from './entities/role.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
-import { AddressEntity, ContactEntity } from 'src/address/entities/address.entity';
+import {
+  AddressEntity,
+  ContactEntity,
+} from 'src/address/entities/address.entity';
 import { CreateUsersDto } from './dto/user.dto';
 import { CreateContactDto } from './dto/contact.dto';
 
@@ -15,6 +19,8 @@ export class UserService {
     private contactRepository: Repository<ContactEntity>,
     @InjectRepository(AddressEntity)
     private addressRepository: Repository<AddressEntity>,
+    @InjectRepository(RoleEntity)
+    private roleRepository: Repository<RoleEntity>,
   ) {}
 
   async getByUserId(id: number) {
@@ -49,6 +55,15 @@ export class UserService {
         userEntity.contacts.push(contactEntity);
       });
     }
+    if (user.roles?.length > 0) {
+      userEntity.roles = [];
+      await Promise.all(
+        user.roles.map(async (role) => {
+          const roleEntity = await this.addOrGetRole(role.name);
+          userEntity.roles.push(roleEntity);
+        }),
+      );
+    }
     return await this.userRepository.save(userEntity);
   }
 
@@ -58,5 +73,19 @@ export class UserService {
     contactEntity.value = contact.value;
 
     return await this.contactRepository.save(contactEntity);
+  }
+
+  private async addOrGetRole(roleName: string) {
+    const roleEntity = await this.roleRepository.findOne({
+      where: {
+        name: roleName,
+      },
+    });
+    if (!roleEntity) {
+      const newRole = new RoleEntity();
+      newRole.name = roleName;
+      return newRole;
+    }
+    return roleEntity;
   }
 }

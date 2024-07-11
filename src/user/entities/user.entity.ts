@@ -3,10 +3,13 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { RoleEntity } from './role.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -25,4 +28,11 @@ export class UserEntity {
     cascade: ['insert', 'update'],
   })
   contacts: ContactEntity[];
+
+  @ManyToMany(() => RoleEntity, (role) => role.users, {
+    eager: true,
+    cascade: ['insert', 'update'],
+  })
+  @JoinTable()
+  roles: RoleEntity[];
 }

@@ -1,6 +1,7 @@
 import { IsNumberString, IsNotEmpty, IsArray, IsOptional } from "class-validator";
 import { ContactDto } from "./contact.dto";
 import { OmitType } from "@nestjs/mapped-types";
+import { RoleDto } from "./role.dto";
 
 export class UserDto {
     @IsNumberString()
@@ -16,6 +17,10 @@ export class UserDto {
     @IsArray()
     @IsOptional()
     contacts: ContactDto[];
+
+    @IsArray()
+    @IsOptional()
+    roles: RoleDto[];
 }
 
 export class CreateUsersDto extends OmitType(UserDto, ['id' ]) { }
