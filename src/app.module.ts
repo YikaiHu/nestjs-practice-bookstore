@@ -10,6 +10,7 @@ import { LoggerMiddleware } from './logger.middleware';
 import { LoggerModule } from './logger/logger.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UserModule } from './user/user.module';
 
 const configService = new ConfigService();
 
@@ -32,6 +33,7 @@ const configService = new ConfigService();
       autoLoadEntities: true,
       synchronize: configService.get('SYNCHRONIZE'),
     }),
+    UserModule,
   ],
 })
 export class AppModule implements NestModule {

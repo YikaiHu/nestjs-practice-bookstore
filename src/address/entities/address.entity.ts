@@ -1,7 +1,12 @@
+import { UserEntity } from 'src/user/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -10,7 +15,7 @@ export class AddressEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({default: 'NA'})
+  @Column({ default: 'NA' })
   address_line: string;
 
   @Column()
@@ -24,4 +29,22 @@ export class AddressEntity {
 
   @CreateDateColumn()
   updated_date: Date;
+
+  @OneToOne(() => UserEntity, (user) => user.address)
+  user: UserEntity;
+}
+
+@Entity('contact')
+export class ContactEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  type: string;
+
+  @Column()
+  value: string;
+
+  @ManyToOne(() => UserEntity, (user) => user.contacts)
+  user: UserEntity;
 }
