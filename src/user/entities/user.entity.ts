@@ -12,14 +12,21 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { RoleEntity } from './role.entity';
+import { Exclude, Expose } from 'class-transformer';
 
 @Entity('user')
 export class UserEntity {
   @PrimaryGeneratedColumn()
+  @Expose()
   id: number;
 
   @Column()
+  @Expose()
   user_name: string;
+
+  @Column()
+  @Expose()
+  email: string;
 
   @OneToOne(() => AddressEntity, (address) => address.user, { eager: true })
   @JoinColumn()
@@ -43,4 +50,8 @@ export class UserEntity {
 
   @UpdateDateColumn()
   updated_date: Date;
+
+  @Column()
+  @Exclude({toPlainOnly: true})
+  password: string;
 }

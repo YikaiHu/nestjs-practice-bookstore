@@ -1,18 +1,24 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   NotFoundException,
   Param,
   ParseIntPipe,
   Post,
-  UsePipes,
+  SerializeOptions,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUsersDto } from './dto/user.dto';
 import { CreateContactDto } from './dto/contact.dto';
 
 @Controller('user')
+@UseInterceptors(ClassSerializerInterceptor)
+@SerializeOptions({
+  strategy: 'excludeAll',
+})
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

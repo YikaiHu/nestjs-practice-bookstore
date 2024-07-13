@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
+import * as bcrypt from 'bcrypt'
 import {
   AddressEntity,
   ContactEntity,
@@ -40,6 +41,9 @@ export class UserService {
   async createUser(user: CreateUsersDto) {
     const userEntity = new UserEntity();
     userEntity.user_name = user.name;
+    userEntity.email = user.email;
+    userEntity.password = await bcrypt.hash(user.password, 10);
+
     if (user.addressId) {
       const address = await this.addressRepository.findOne({
         where: { id: user.addressId },

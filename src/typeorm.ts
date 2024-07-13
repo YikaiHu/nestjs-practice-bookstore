@@ -9,6 +9,8 @@ import { UserEntity } from './user/entities/user.entity';
 import { registerAs } from '@nestjs/config';
 import { InitDatabase1720714397004 } from './migrations/1720714397004-InitDatabase';
 import { AddUserCreatUpdatedDate1720714553167 } from './migrations/1720714553167-Add_User_creatUpdatedDate';
+import { AddUserPassword1720866147138 } from './migrations/1720866147138-Add_User_password';
+import { AddUserEmail1720867293406 } from './migrations/1720867293406-Add_User_Email';
 
 dotenvConfig({ path: `.env.${process.env.NODE_ENV}` });
 
@@ -26,11 +28,15 @@ const config = {
 const { autoLoadEntities, synchronize, ...otherConfigs } = config;
 const migrationConfig = {
   ...otherConfigs,
-  migrations: [InitDatabase1720714397004, AddUserCreatUpdatedDate1720714553167],
+  migrations: [
+    InitDatabase1720714397004,
+    AddUserCreatUpdatedDate1720714553167,
+    AddUserPassword1720866147138,
+    AddUserEmail1720867293406,
+  ],
   entities: [AddressEntity, UserEntity, ContactEntity, RoleEntity],
 };
 export default registerAs('OrmConfig', () => config);
 export const connectionSource = new DataSource(
   migrationConfig as DataSourceOptions,
 );
-

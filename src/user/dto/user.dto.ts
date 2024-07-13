@@ -1,4 +1,4 @@
-import { IsNumberString, IsNotEmpty, IsArray, IsOptional } from "class-validator";
+import { IsNumberString, IsNotEmpty, IsArray, IsOptional, IsString, IsEmail } from "class-validator";
 import { ContactDto } from "./contact.dto";
 import { OmitType } from "@nestjs/mapped-types";
 import { RoleDto } from "./role.dto";
@@ -9,6 +9,12 @@ export class UserDto {
 
     @IsNotEmpty()
     name: string;
+
+    @IsEmail()
+    email: string;
+
+    @IsString()
+    password: string;
     
     @IsNumberString()
     @IsOptional()
