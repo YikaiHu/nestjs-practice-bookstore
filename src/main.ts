@@ -2,6 +2,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { ResponseInterceptor } from './common/response.interceptor';
 
 declare const module: any;
 
@@ -36,6 +37,7 @@ async function bootstrap() {
   // Configure Swagger UI
   SwaggerModule.setup('api', app, document);
 
+  app.useGlobalInterceptors(new ResponseInterceptor())
   await app.listen(3000);
 
   if (module.hot) {

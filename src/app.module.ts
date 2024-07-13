@@ -11,6 +11,7 @@ import { LoggerModule } from './logger/logger.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './user/user.module';
+import { CommonModule } from './common/common.module';
 import OrmConfig from './typeorm';
 
 @Module({
@@ -29,6 +30,7 @@ import OrmConfig from './typeorm';
         configService.get('OrmConfig'),
     }),
     UserModule,
+    CommonModule,
   ],
 })
 export class AppModule implements NestModule {
