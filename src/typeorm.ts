@@ -11,6 +11,7 @@ import { InitDatabase1720714397004 } from './migrations/1720714397004-InitDataba
 import { AddUserCreatUpdatedDate1720714553167 } from './migrations/1720714553167-Add_User_creatUpdatedDate';
 import { AddUserPassword1720866147138 } from './migrations/1720866147138-Add_User_password';
 import { AddUserEmail1720867293406 } from './migrations/1720867293406-Add_User_Email';
+import { AddUserPayGrade1720868243824 } from './migrations/1720868243824-Add_User_pay_grade';
 
 dotenvConfig({ path: `.env.${process.env.NODE_ENV}` });
 
@@ -33,6 +34,7 @@ const migrationConfig = {
     AddUserCreatUpdatedDate1720714553167,
     AddUserPassword1720866147138,
     AddUserEmail1720867293406,
+    AddUserPayGrade1720868243824,
   ],
   entities: [AddressEntity, UserEntity, ContactEntity, RoleEntity],
 };

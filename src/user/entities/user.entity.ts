@@ -13,19 +13,20 @@ import {
 } from 'typeorm';
 import { RoleEntity } from './role.entity';
 import { Exclude, Expose } from 'class-transformer';
+import { RoleConstant } from '../role.constant';
 
 @Entity('user')
 export class UserEntity {
   @PrimaryGeneratedColumn()
-  @Expose()
+  @Expose({ groups: [RoleConstant.Admin, RoleConstant.Editor, RoleConstant.Reader]})
   id: number;
 
   @Column()
-  @Expose()
+  @Expose({ groups: [RoleConstant.Admin, RoleConstant.Editor, RoleConstant.Reader]})
   user_name: string;
 
   @Column()
-  @Expose()
+  @Expose({ groups: [RoleConstant.Admin, RoleConstant.Editor, RoleConstant.Reader]})
   email: string;
 
   @OneToOne(() => AddressEntity, (address) => address.user, { eager: true })
@@ -52,6 +53,10 @@ export class UserEntity {
   updated_date: Date;
 
   @Column()
-  @Exclude({toPlainOnly: true})
+  @Expose({ groups: [RoleConstant.Admin]})
   password: string;
+
+  @Column()
+  @Expose({ groups: [RoleConstant.Admin, RoleConstant.Editor]})
+  pay_grade: string;
 }

@@ -13,6 +13,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUsersDto } from './dto/user.dto';
 import { CreateContactDto } from './dto/contact.dto';
+import { RoleConstant } from './role.constant';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -44,5 +45,29 @@ export class UserController {
   @Post('contact')
   async createContact(@Body() contact: CreateContactDto) {
     return await this.userService.createUserContact(contact);
+  }
+
+  @Get('admin/:id')
+  @SerializeOptions({
+    groups: [RoleConstant.Admin],
+  })
+  async getByAdmin(@Param('id', ParseIntPipe) id: number) {
+    return await this.userService.getByUserId(id);
+  }
+
+  @Get('editor/:id')
+  @SerializeOptions({
+    groups: [RoleConstant.Editor],
+  })
+  async getByEditor(@Param('id', ParseIntPipe) id: number) {
+    return await this.userService.getByUserId(id);
+  }
+
+  @Get('reader/:id')
+  @SerializeOptions({
+    groups: [RoleConstant.Reader],
+  })
+  async getByReader(@Param('id', ParseIntPipe) id: number) {
+    return await this.userService.getByUserId(id);
   }
 }
