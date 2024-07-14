@@ -29,6 +29,9 @@ import {
 import { AddressValidationPipe } from './address-validation.pipe';
 import { HttpAddressExceptionFilter } from 'src/http-exception.filter';
 import { JwtAuthGuard } from 'src/common/jwt-auth.guard';
+import { Role } from 'src/common/role.enum';
+import { Roles } from 'src/common/role.decorator';
+import { RoleGuard } from 'src/common/role.guard';
 
 @ApiTags('address')
 @Controller('address')
@@ -44,6 +47,8 @@ export class AddressController {
   }
 
   @Get(':id')
+  @Roles(Role.Reader, Role.Writer, Role.Admin)
+  @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Retrieve an address by its unique id' })
   @ApiParam({
     name: 'id',
@@ -69,12 +74,16 @@ export class AddressController {
   //   }
 
   @Get()
+  @Roles(Role.Reader, Role.Writer, Role.Admin)
+  @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Retrieve all addresses' })
   async getAll() {
     return await this.addressService.getAll();
   }
 
   @Post()
+  @Roles(Role.Writer, Role.Admin)
+  @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Create a new address' })
   @ApiBody({
     type: CreateAddressDto,
@@ -86,6 +95,8 @@ export class AddressController {
   }
 
   @Put(':id')
+  @Roles(Role.Writer, Role.Admin)
+  @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Update an existing address' })
   @ApiParam({
     name: 'id',
@@ -104,6 +115,8 @@ export class AddressController {
   }
 
   @Delete(':id')
+  @Roles(Role.Admin)
+  @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Delete an address by its unique id' })
   @ApiParam({
     name: 'id',
