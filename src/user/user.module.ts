@@ -20,5 +20,6 @@ import { StateController } from './state.controller';
   ],
   controllers: [UserController, StateController],
   providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {}

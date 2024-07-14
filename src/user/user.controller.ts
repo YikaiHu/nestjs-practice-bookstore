@@ -14,7 +14,9 @@ import { UserService } from './user.service';
 import { CreateUsersDto } from './dto/user.dto';
 import { CreateContactDto } from './dto/contact.dto';
 import { RoleConstant } from './role.constant';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('user')
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({

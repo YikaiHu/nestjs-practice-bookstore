@@ -32,6 +32,12 @@ export class UserService {
     return user;
   }
 
+  async getByEmail(email: string) {
+    return await this.userRepository.findOne({
+      where: { email },
+    });
+  }
+
   async getAllUsers() {
     return await this.userRepository.find({
       relations: ['contacts'],
@@ -43,7 +49,7 @@ export class UserService {
     userEntity.user_name = user.name;
     userEntity.email = user.email;
     userEntity.password = await bcrypt.hash(user.password, 10);
-    userEntity.pay_grade = user.payGrade;
+    userEntity.pay_grade = user.payGrade || 'H';
 
     if (user.addressId) {
       const address = await this.addressRepository.findOne({

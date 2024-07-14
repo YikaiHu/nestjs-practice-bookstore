@@ -12,6 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { CommonModule } from './common/common.module';
+import { AuthModule } from './auth/auth.module';
 import OrmConfig from './typeorm';
 
 @Module({
@@ -31,6 +32,7 @@ import OrmConfig from './typeorm';
     }),
     UserModule,
     CommonModule,
+    AuthModule,
   ],
 })
 export class AppModule implements NestModule {

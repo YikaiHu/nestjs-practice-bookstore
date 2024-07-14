@@ -17,6 +17,7 @@ export class UserDto {
     password: string;
 
     @IsString()
+    @IsOptional()
     payGrade: string;
     
     @IsNumberString()
