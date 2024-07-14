@@ -25,16 +25,14 @@ import {
   ApiOperation,
   ApiParam,
   ApiBody,
-  ApiQuery,
 } from '@nestjs/swagger';
 import { AddressValidationPipe } from './address-validation.pipe';
 import { HttpAddressExceptionFilter } from 'src/http-exception.filter';
-import { AuthGuard } from 'src/common/auth.guard';
-import { AdminGuard } from 'src/common/admin.guard';
+import { JwtAuthGuard } from 'src/common/jwt-auth.guard';
 
 @ApiTags('address')
 @Controller('address')
-@UseGuards(AuthGuard)
+@UseGuards(JwtAuthGuard)
 @UseFilters(new HttpAddressExceptionFilter())
 // @UseFilters(HttpAddressExceptionFilter) 这两种写法都可以，如果不是手动new 的话，NestJS 的DI 会帮你创建
 export class AddressController {
@@ -77,7 +75,6 @@ export class AddressController {
   }
 
   @Post()
-  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: 'Create a new address' })
   @ApiBody({
     type: CreateAddressDto,
